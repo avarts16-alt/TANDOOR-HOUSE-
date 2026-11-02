@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#171717"><link rel="manifest" href="manifest.json">
+<title>Tandoor House Accounts</title>
+<style>
+:root{--bg:#f5f5f4;--card:#fff;--ink:#18181b;--muted:#71717a;--accent:#ea580c;--line:#e4e4e7;--green:#15803d;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#171717;color:white;padding:18px 15px;position:sticky;top:0;z-index:4}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;color:#d4d4d8;font-size:13px}
+main{max-width:950px;margin:auto;padding:12px 12px 80px}.date-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:5px 0 12px}.date-row input{max-width:160px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:1px solid #d4d4d8;border-radius:10px;background:white;color:var(--ink)}label{display:block;font-size:13px;color:#52525b;margin:9px 0 5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:0 1px 2px #00000008}.metric small{display:block;color:var(--muted)}.metric strong{display:block;font-size:21px;margin-top:4px;overflow-wrap:anywhere}.metric{border-top:3px solid var(--accent)}
+h2{font-size:17px;margin:0 0 10px}.tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin:9px 0}.tab{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 12px;white-space:nowrap;font-weight:600}.tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 9px}.full{grid-column:1/-1}button{font:inherit;cursor:pointer}.primary{width:100%;border:0;background:var(--accent);color:white;padding:12px;border-radius:10px;font-weight:700;margin-top:11px}.secondary{border:1px solid var(--line);background:white;border-radius:9px;padding:7px 10px}.danger{color:var(--red)}.section{display:none}.section.active{display:block}.row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row small{display:block;color:var(--muted);margin-top:3px}.amount{font-weight:700;white-space:nowrap}.muted{color:var(--muted)}.note{background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:10px;font-size:12px;color:#9a3412;margin:10px 0}.empty{padding:18px;text-align:center;color:var(--muted)}.subhead{margin:14px 0 7px;font-size:14px}.good{color:var(--green)}.bad{color:var(--red)}footer{text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
+@media(min-width:680px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style></head>
+<body><header><h1>🍗 Tandoor House</h1><p>Sales · Expenses · Stock · Cash · Staff · Profit</p></header>
+<main>
+<div class="date-row"><strong>Daily overview</strong><input id="day" type="date" aria-label="Selected date"></div>
+<div class="grid">
+<div class="card metric"><small>Sales recorded</small><strong id="dSales">₹0</strong></div>
+<div class="card metric"><small>Expenses recorded</small><strong id="dExp">₹0</strong></div>
+<div class="card metric"><small>Cashbook difference*</small><strong id="dDiff">₹0</strong></div>
+<div class="card metric"><small>Cash expected</small><strong id="cashExpected">₹0</strong></div>
+</div>
+<div class="note">*Cashbook difference is not final profit. For a better estimate, record stock usage, staff costs, rent, fees and unpaid bills. Avoid counting stock purchases and stock consumed twice.</div>
+<div class="tabs">
+<button class="tab active" data-tab="sales">➕ Sales</button><button class="tab" data-tab="expenses">🧾 Expenses</button><button class="tab" data-tab="stock">📦 Stock</button><button class="tab" data-tab="cash">💵 Cash close</button><button class="tab" data-tab="staff">👨‍🍳 Staff</button><button class="tab" data-tab="profit">📈 Profit</button><button class="tab" data-tab="history">📋 Entries</button><button class="tab" data-tab="backup">⚙️ Backup</button>
+</div>
+<section id="sales" class="section active"><div class="card"><h2>Add sales</h2><form id="salesForm"><div class="formgrid">
+<div><label>Category</label><select id="sCat"><option>Chinese</option><option>Biryani</option><option>Shawarma</option><option>Other</option></select></div>
+<div><label>Payment method</label><select id="sPay"><option>Cash</option><option>UPI / GPay</option><option>Online order</option><option>Credit / Due</option></select></div>
+<div><label>Amount (₹)</label><input id="sAmt" type="number" min=".01" step=".01" required placeholder="850"></div>
+<div class="full"><label>Note (optional)</label><input id="sNote" maxlength="100" placeholder="Dinner sales"></div>
+</div><button class="primary">Save sales</button></form></div></section>
+<section id="expenses" class="section"><div class="card"><h2>Add expense / purchase</h2><form id="eForm"><div class="formgrid">
+<div><label>Category</label><select id="eCat"><option>Chicken / Meat</option><option>Rice</option><option>Oil / Masala</option><option>Shawarma bread / Roti</option><option>Vegetables</option><option>Packaging</option><option>Gas / Fuel</option><option>Staff salary</option><option>Rent</option><option>Electricity / Water</option><option>Platform commission</option><option>Delivery</option><option>Repairs</option><option>Other</option></select></div>
+<div><label>Payment status</label><select id="ePay"><option>Cash</option><option>UPI / GPay</option><option>Bank</option><option>Unpaid bill</option></select></div>
+<div><label>Amount (₹)</label><input id="eAmt" type="number" min=".01" step=".01" required placeholder="420"></div>
+<div class="full"><label>Note / supplier</label><input id="eNote" maxlength="100" placeholder="Chicken supplier"></div>
+</div><button class="primary">Save expense</button></form></div></section>
+<section id="stock" class="section">
+<div class="card"><h2>Stock purchase / opening stock</h2><form id="stockForm"><div class="formgrid">
+<div><label>Item</label><select id="stItem"><option>Chicken (kg)</option><option>Rice (kg)</option><option>Oil (litre)</option><option>Shawarma bread / Roti (pcs)</option><option>Packaging (pcs)</option><option>Other</option></select></div>
+<div><label>Movement</label><select id="stMove"><option value="in">Stock added</option><option value="out">Stock used / wasted</option><option value="opening">Set opening stock</option></select></div>
+<div><label>Quantity</label><input id="stQty" type="number" min=".001" step=".001" required placeholder="5"></div>
+<div><label>Unit cost (₹, optional)</label><input id="stCost" type="number" min="0" step=".01" placeholder="320"></div>
+<div class="full"><label>Note</label><input id="stNote" maxlength="100" placeholder="Supplier / reason"></div>
+</div><button class="primary">Save stock movement</button></form><p class="muted">For each item, “Set opening stock” establishes the starting quantity. Purchases and usage then update the estimated balance. This is a simple quantity tracker, not a full inventory valuation system.</p></div>
+<div class="card"><h2>Current estimated stock</h2><div id="stockBalances"></div></div>
+</section>
+<section id="cash" class="section"><div class="card"><h2>End-of-day cash close</h2><p class="muted">Enter opening cash and physically count cash in the drawer. Cash expected is calculated from recorded cash sales and cash expenses.</p><form id="cashForm"><label>Opening cash (₹)</label><input id="cOpen" type="number" min="0" step=".01" required placeholder="e.g. 500"><label>Actual cash counted at closing (₹)</label><input id="cActual" type="number" min="0" step=".01" required placeholder="e.g. 2200"><label>Cash removed / owner withdrawal (₹)</label><input id="cWithdraw" type="number" min="0" step=".01" value="0"><label>Cash added / owner deposit (₹)</label><input id="cAdded" type="number" min="0" step=".01" value="0"><button class="primary">Save cash close</button></form><div id="cashResult" class="note">Select a date and enter the closing figures.</div></div></section>
+<section id="staff" class="section"><div class="card"><h2>Add staff / salary entry</h2><form id="staffForm"><div class="formgrid"><div><label>Staff name</label><input id="staffName" required maxlength="70" placeholder="Worker name"></div><div><label>Entry type</label><select id="staffType"><option>Salary paid</option><option>Advance paid</option><option>Salary due / payable</option></select></div><div><label>Amount (₹)</label><input id="staffAmt" type="number" min=".01" step=".01" required placeholder="15000"></div><div class="full"><label>Note (optional)</label><input id="staffNote" maxlength="100" placeholder="November salary"></div></div><button class="primary">Save staff entry</button></form></div><div class="card"><h2>Staff summary for selected month</h2><div id="staffSummary"></div></div></section>
+<section id="profit" class="section"><div class="card"><h2>Monthly business snapshot</h2><label>Month</label><input id="month" type="month"><div class="grid" style="margin-top:10px"><div class="card metric"><small>Sales</small><strong id="mSales">₹0</strong></div><div class="card metric"><small>Recorded expenses</small><strong id="mExp">₹0</strong></div><div class="card metric"><small>Difference</small><strong id="mDiff">₹0</strong></div><div class="card metric"><small>Credit sales</small><strong id="mDue">₹0</strong></div></div><h3 class="subhead">Sales by category</h3><div id="salesCats"></div><h3 class="subhead">Expenses by category</h3><div id="expenseCats"></div><h3 class="subhead">Stock used / wasted</h3><div id="stockUsed"></div><div class="note">For a more accurate profit figure, enter stock usage and all overheads. Purchases are cash outflows; the value of stock consumed, rather than all purchases, is generally used for profit calculation. This app does not yet calculate a formal cost of goods sold automatically.</div></div></section>
+<section id="history" class="section"><div class="card"><h2>Sales and expense entries for selected date</h2><div id="entries"></div><h2 class="subhead">Stock and staff entries</h2><div id="otherEntries"></div></div></section>
+<section id="backup" class="section"><div class="card"><h2>Backup & restore</h2><p class="muted">Entries are stored on this browser/device. They do not automatically sync between phones. Export a backup regularly.</p><button id="export" class="primary">Download full backup (JSON)</button><button id="csv" class="secondary" style="margin-top:9px">Download entries (CSV)</button><label>Restore backup (replaces current data)</label><input id="importFile" type="file" accept=".json,application/json"><div class="note">Cloud backup is not connected in this version. To sync across devices safely, a database and authentication must be configured; do not put passwords or API keys in a public GitHub repository.</div></div><div class="card"><h2>Using the app</h2><p>1. Record each sale and expense daily.</p><p>2. Track stock additions and stock used/wasted.</p><p>3. At closing, enter actual cash counted.</p><p>4. Record staff advances, payments and unpaid salary.</p><p>5. Export backups weekly and before changing phones.</p></div></section>
+<footer>Tandoor House Accounts · INR ₹ · Local browser storage</footer></main>
+<script>
+const $=id=>document.getElementById(id),KEY='tandoorHouseAccountsV2';
+let db={entries:[],stock:[],cash:[],staff:[]};
+try{const old=JSON.parse(localStorage.getItem(KEY)||'null');if(old&&typeof old==='object')db={...db,...old};else{const v1=JSON.parse(localStorage.getItem('tandoorHouseAccountsV1')||'[]');if(Array.isArray(v1))db.entries=v1}}catch{}
+const today=()=>{let d=new Date(),off=d.getTimezoneOffset();return new Date(d.getTime()-off*60000).toISOString().slice(0,10)};
+$('day').value=today();$('month').value=today().slice(0,7);
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function persist(){localStorage.setItem(KEY,JSON.stringify(db))}
+function total(arr,type){return arr.filter(x=>x.type===type).reduce((a,x)=>a+Number(x.amount||0),0)}
+function dailyEntries(){return db.entries.filter(x=>x.date===$('day').value)}
+function saveEntry(type,cat,pay,amt,note){db.entries.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),type,category:cat,payment:pay,amount:Number(amt),note:note||'',date:$('day').value,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});persist();render()}
+$('salesForm').onsubmit=e=>{e.preventDefault();let a=+$('sAmt').value;if(a<=0)return;saveEntry('sale',$('sCat').value,$('sPay').value,a,$('sNote').value);e.target.reset();alert('Sales saved.')};
+$('eForm').onsubmit=e=>{e.preventDefault();let a=+$('eAmt').value;if(a<=0)return;saveEntry('expense',$('eCat').value,$('ePay').value,a,$('eNote').value);e.target.reset();alert('Expense saved.')};
+$('stockForm').onsubmit=e=>{e.preventDefault();let q=+$('stQty').value;if(q<=0)return;db.stock.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date:$('day').value,item:$('stItem').value,movement:$('stMove').value,qty:q,cost:+$('stCost').value||0,note:$('stNote').value});persist();e.target.reset();render();alert('Stock movement saved.')};
+$('cashForm').onsubmit=e=>{e.preventDefault();let date=$('day').value;db.cash=db.cash.filter(x=>x.date!==date);db.cash.push({date,opening:+$('cOpen').value,actual:+$('cActual').value,withdraw:+$('cWithdraw').value||0,added:+$('cAdded').value||0});persist();render();alert('Cash close saved.')};
+$('staffForm').onsubmit=e=>{e.preventDefault();let a=+$('staffAmt').value;if(a<=0)return;db.staff.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date:$('day').value,name:$('staffName').value.trim(),type:$('staffType').value,amount:a,note:$('staffNote').value.trim()});persist();e.target.reset();render();alert('Staff entry saved.')};
+$('day').onchange=()=>{render();loadCashForm()};$('month').onchange=render;
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===b));document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===b.dataset.tab));render();loadCashForm()});
+function row(title,sub,amount,color,del){return `<div class="row"><div><strong>${esc(title)}</strong><small>${esc(sub||'')}</small></div><div style="text-align:right"><div class="amount ${color||''}">${amount}</div>${del?`<button class="secondary danger" onclick="delItem('${del[0]}','${del[1]}')">Delete</button>`:''}</div></div>`}
+window.delItem=(group,id)=>{if(!confirm('Delete this entry?'))return;db[group]=db[group].filter(x=>x.id!==id);persist();render()};
+function stockBalance(){let m={};db.stock.forEach(x=>{if(x.movement==='opening')m[x.item]=x.qty;else m[x.item]=(m[x.item]||0)+(x.movement==='in'?x.qty:-x.qty)});return m}
+function render(){
+ let date=$('day').value, rows=dailyEntries(),s=total(rows,'sale'),ex=total(rows,'expense');
+ $('dSales').textContent=money(s);$('dExp').textContent=money(ex);$('dDiff').textContent=money(s-ex);$('dDiff').className=s-ex<0?'bad':'good';
+ const cashSales=rows.filter(x=>x.type==='sale'&&x.payment==='Cash').reduce((a,x)=>a+x.amount,0);
+ const cashExp=rows.filter(x=>x.type==='expense'&&x.payment==='Cash').reduce((a,x)=>a+x.amount,0);
+ const close=db.cash.find(x=>x.date===date);
+ $('cashExpected').textContent=money(close?close.opening+cashSales-cashExp-close.withdraw+close.added:cashSales-cashExp);
+ $('entries').innerHTML=rows.length?rows.slice().reverse().map(x=>row(x.category,x.type+' · '+x.payment+(x.note?' · '+x.note:''), (x.type==='sale'?'+':'−')+money(x.amount),x.type==='sale'?'good':'bad',['entries',x.id])).join(''):'<div class="empty">No sales or expense entries.</div>';
+ let os=[...db.stock.filter(x=>x.date===date).map(x=>({...x,grp:'stock',title:x.item,desc:`Stock ${x.movement} · ${x.qty} · ${x.note||''}`,amt:''})),...db.staff.filter(x=>x.date===date).map(x=>({...x,grp:'staff',title:x.name,desc:`${x.type} · ${x.note||''}`,amt:money(x.amount)}))];
+ $('otherEntries').innerHTML=os.length?os.reverse().map(x=>row(x.title,x.desc,x.amt,'',[x.grp,x.id])).join(''):'<div class="empty">No stock or staff entries.</div>';
+ let b=stockBalance();$('stockBalances').innerHTML=Object.keys(b).length?Object.entries(b).map(([k,v])=>row(k,'Estimated balance',String(Number(v.toFixed(3))))).join(''):'<div class="empty">Add opening stock to begin.</div>';
+ let month=$('month').value||date.slice(0,7), mr=db.entries.filter(x=>x.date.startsWith(month)),ms=total(mr,'sale'),me=total(mr,'expense');
+ $('mSales').textContent=money(ms);$('mExp').textContent=money(me);$('mDiff').textContent=money(ms-me);$('mDiff').className=ms-me<0?'bad':'good';$('mDue').textContent=money(mr.filter(x=>x.type==='sale'&&x.payment==='Credit / Due').reduce((a,x)=>a+x.amount,0));
+ const groups=(arr,key)=>{let o={};arr.forEach(x=>o[x[key]]=(o[x[key]]||0)+Number(x.amount||0));return Object.keys(o).length?Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>row(k,'',money(v))).join(''):'<div class="empty">No data yet.</div>'};
+ $('salesCats').innerHTML=groups(mr.filter(x=>x.type==='sale'),'category');$('expenseCats').innerHTML=groups(mr.filter(x=>x.type==='expense'),'category');
+ let used=db.stock.filter(x=>x.date.startsWith(month)&&x.movement==='out');$('stockUsed').innerHTML=used.length?groups(used,'item'):'<div class="empty">No stock usage recorded.</div>';
+ let st=db.staff.filter(x=>x.date.startsWith(month));$('staffSummary').innerHTML=st.length?st.map(x=>row(x.name,x.date+' · '+x.type+(x.note?' · '+x.note:''),money(x.amount),x.type==='Salary due / payable'?'bad':'')).join(''):'<div class="empty">No staff entries for this month.</div>';
+ if(close){$('cashResult').innerHTML=`Expected cash: <strong>${money(close.opening+cashSales-cashExp-close.withdraw+close.added)}</strong><br>Actual counted: <strong>${money(close.actual)}</strong><br>Difference: <strong class="${close.actual-(close.opening+cashSales-cashExp-close.withdraw+close.added)<0?'bad':'good'}">${money(close.actual-(close.opening+cashSales-cashExp-close.withdraw+close.added))}</strong>`}else $('cashResult').textContent='No closing entry saved for this date.';
+}
+function loadCashForm(){let c=db.cash.find(x=>x.date===$('day').value);$('cOpen').value=c?.opening??'';$('cActual').value=c?.actual??'';$('cWithdraw').value=c?.withdraw??0;$('cAdded').value=c?.added??0}
+function download(name,content,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+$('export').onclick=()=>download('tandoor-house-backup-'+today()+'.json',JSON.stringify({app:'Tandoor House Accounts',version:2,exportedAt:new Date().toISOString(),data:db},null,2),'application/json');
+$('csv').onclick=()=>{let all=[...db.entries.map(x=>({...x,group:'sales_expenses'})),...db.stock.map(x=>({...x,group:'stock'})),...db.staff.map(x=>({...x,group:'staff'})),...db.cash.map(x=>({...x,group:'cash_close'}))];let keys=['group','date','type','category','payment','amount','item','movement','qty','cost','name','opening','actual','withdraw','added','note'];let lines=[keys,...all.map(x=>keys.map(k=>x[k]??''))].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));download('tandoor-house-all-entries-'+today()+'.csv',lines.join('\r\n'),'text/csv')};
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let o=JSON.parse(await f.text()),next=o.data||o;if(!next||!Array.isArray(next.entries))throw Error();if(!confirm('This replaces all current data with the selected backup. Continue?'))return;db={entries:[],stock:[],cash:[],staff:[],...next};persist();render();loadCashForm();alert('Backup restored.')}catch{alert('Invalid backup file.')}e.target.value=''};
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+render();loadCashForm();
+</script></body></html>
